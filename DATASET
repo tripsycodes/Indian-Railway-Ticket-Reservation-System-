@@ -88,6 +88,10 @@ INSERT INTO trains (train_name) VALUES
 ('Mysore Duronto'),
 ('Jodhpur Intercity');
 
+--------------------------------------------------------------------------------------------------------------
+
+Route Table
+
 INSERT INTO route (train_id, station_id, stop_number, arrival_time, departure_time) VALUES
 (1, 1, 1, NULL, '2025-04-11 06:00:00'),  -- Start station
 (1, 2, 2, '2025-04-11 08:00:00', '2025-04-11 08:10:00'),
@@ -237,3 +241,76 @@ INSERT INTO route (train_id, station_id, stop_number, arrival_time, departure_ti
 (25, 17, 2, '2025-04-11 07:35:00', '2025-04-11 07:50:00'),
 (25, 29, 3, '2025-04-11 09:25:00', '2025-04-11 09:40:00'),
 (25, 40, 4, '2025-04-11 11:05:00', NULL);
+
+-----------------------------------------------------------------------------------------------------------------
+Passengers
+
+INSERT INTO passengers (name, age, gender, phone, email, concession_category) VALUES
+('Amit Sharma', 35, 'Male', '9000100010', 'amit.sharma@example.com', 'None'),
+('Priya Mehta', 29, 'Female', '9000100020', 'priya.mehta@example.com', 'Women'),
+('Karan Singh', 70, 'Male', '9000100030', 'karan.singh@example.com', 'Senior'),
+('Neha Kapoor', 21, 'Female', '9000100040', 'neha.kapoor@example.com', 'Student'),
+('Ravi Verma', 45, 'Male', '9000100050', 'ravi.verma@example.com', 'None'),
+('Swati Joshi', 63, 'Female', '9000100060', 'swati.joshi@example.com', 'Senior'),
+('Arjun Desai', 19, 'Male', '9000100070', 'arjun.desai@example.com', 'Student'),
+('Megha Iyer', 31, 'Female', '9000100080', 'megha.iyer@example.com', 'None'),
+('Siddharth Rao', 26, 'Male', '9000100090', 'siddharth.rao@example.com', 'None'),
+('Anjali Nair', 40, 'Female', '9000100100', 'anjali.nair@example.com', 'None'),
+
+('Vikram Chauhan', 68, 'Male', '9000100110', 'vikram.chauhan@example.com', 'Senior'),
+('Divya Kulkarni', 22, 'Female', '9000100120', 'divya.k@example.com', 'Student'),
+('Tanya Gupta', 6, 'Female', '9000100130', 'tanya.g@example.com', 'Child'),
+('Harsh Vardhan', 11, 'Male', '9000100140', 'harsh.v@example.com', 'Child'),
+('Preeti Saxena', 34, 'Female', '9000100150', 'preeti.saxena@example.com', 'Women'),
+('Rahul Yadav', 28, 'Male', '9000100160', 'rahul.y@example.com', 'None'),
+('Ruchi Bansal', 36, 'Female', '9000100170', 'ruchi.b@example.com', 'Women'),
+('Kavita Pillai', 72, 'Female', '9000100180', 'kavita.p@example.com', 'Senior'),
+('Manav Bhatt', 25, 'Male', '9000100190', 'manav.b@example.com', 'None'),
+('Zoya Khan', 23, 'Female', '9000100200', 'zoya.k@example.com', 'Student'),
+
+('Nikhil Aggarwal', 60, 'Male', '9000100210', 'nikhil.a@example.com', 'Senior'),
+('Ishita Roy', 27, 'Female', '9000100220', 'ishita.r@example.com', 'Women'),
+('Mohit Jain', 8, 'Male', '9000100230', 'mohit.j@example.com', 'Child'),
+('Aarav Malhotra', 33, 'Male', '9000100240', 'aarav.m@example.com', 'None'),
+('Pooja Sen', 59, 'Female', '9000100250', 'pooja.s@example.com', 'None'),
+('Deepak Rathi', 45, 'Male', '9000100260', 'deepak.r@example.com', 'None'),
+('Sneha Tiwari', 18, 'Female', '9000100270', 'sneha.t@example.com', 'Student'),
+('Yash Thakur', 20, 'Male', '9000100280', 'yash.t@example.com', 'Student'),
+('Rhea D Souza', 65, 'Female', '9000100290', 'rhea.d@example.com', 'Senior'),
+('Sameer Khan', 27, 'Male', '9000100300', 'sameer.k@example.com', 'None'),
+
+('Tarun Arora', 12, 'Male', '9000100310', 'tarun.a@example.com', 'Child'),
+('Lavanya Sinha', 37, 'Female', '9000100320', 'lavanya.s@example.com', 'Women'),
+('Devika Joshi', 53, 'Female', '9000100330', 'devika.j@example.com', 'None'),
+('Aditya Kaul', 42, 'Male', '9000100340', 'aditya.k@example.com', 'None'),
+('Muskan Lamba', 30, 'Female', '9000100350', 'muskan.l@example.com', 'None'),
+('Rahul Dube', 48, 'Male', '9000100360', 'rahul.d@example.com', 'None'),
+('Gauri Mishra', 60, 'Female', '9000100370', 'gauri.m@example.com', 'Senior'),
+('Shreya Bhatia', 17, 'Female', '9000100380', 'shreya.b@example.com', 'Student'),
+('Kunal Taneja', 26, 'Male', '9000100390', 'kunal.t@example.com', 'None'),
+('Reshma Das', 32, 'Female', '9000100400', 'reshma.d@example.com', 'Women'),
+
+('Vikas Kohli', 66, 'Male', '9000100410', 'vikas.k@example.com', 'Senior'),
+('Ira Reddy', 7, 'Female', '9000100420', 'ira.r@example.com', 'Child'),
+('Omkar Sharma', 13, 'Male', '9000100430', 'omkar.s@example.com', 'Child'),
+('Nikita Rana', 24, 'Female', '9000100440', 'nikita.r@example.com', 'Student'),
+('Tanmay Jain', 19, 'Male', '9000100450', 'tanmay.j@example.com', 'Student'),
+('Bhavna Meena', 35, 'Female', '9000100460', 'bhavna.m@example.com', 'None'),
+('Imran Siddiqui', 29, 'Male', '9000100470', 'imran.s@example.com', 'None'),
+('Shivani Kapoor', 41, 'Female', '9000100480', 'shivani.k@example.com', 'Women'),
+('Veer Saxena', 9, 'Male', '9000100490', 'veer.s@example.com', 'Child'),
+('Simran Gill', 62, 'Female', '9000100500', 'simran.g@example.com', 'Senior'),
+
+('Dev Mehra', 55, 'Male', '9000100510', 'dev.m@example.com', 'None'),
+('Kanika Bawa', 28, 'Female', '9000100520', 'kanika.b@example.com', 'Women'),
+('Rohit Patil', 31, 'Male', '9000100530', 'rohit.p@example.com', 'None'),
+('Tara Chatterjee', 67, 'Female', '9000100540', 'tara.c@example.com', 'Senior'),
+('Armaan Qureshi', 34, 'Male', '9000100550', 'armaan.q@example.com', 'None'),
+('Reet Oberoi', 25, 'Other', '9000100560', 'reet.o@example.com', 'Student'),
+('Sana Sheikh', 36, 'Female', '9000100570', 'sana.s@example.com', 'Women'),
+('Jayant Chawla', 23, 'Male', '9000100580', 'jayant.c@example.com', 'None'),
+('Mahima Sharma', 71, 'Female', '9000100590', 'mahima.s@example.com', 'Senior'),
+('Adnan Farooqi', 15, 'Male', '9000100600', 'adnan.f@example.com', 'Child'),
+('Tripti Jain', 15, 'Female', '9002939000', 'tjain.f@example.com', 'Child'),
+('Chahat', 65, 'Female', '9000829901', 'shivahat@example.com', 'Senior');
+
