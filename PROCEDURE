@@ -1,0 +1,90 @@
+PROCEDURE
+
+DELIMITER //
+
+CREATE PROCEDURE get_trains_by_city_names (
+    IN source_city VARCHAR(100),
+    IN destination_city VARCHAR(100)
+)
+BEGIN
+    -- Step 1: Create a temporary table to hold seat availability
+    CREATE TEMPORARY TABLE temp_seat_availability (
+        train_id INT,
+        available_seats INT
+    );
+
+    -- Step 2: Populate the temporary table
+    INSERT INTO temp_seat_availability (train_id, available_seats)
+    SELECT 
+        train_id,
+        COUNT(seat_id)
+    FROM seats
+    WHERE availability_status = 'Available'
+    GROUP BY train_id;
+
+    -- Step 3: Main train selection query
+    SELECT 
+        t.train_id,
+        t.train_name,
+        s1.station_name AS source_station,
+        s2.station_name AS destination_station,
+        r1.departure_time AS source_departure_time,
+        r2.arrival_time AS destination_arrival_time,
+        COALESCE(tsa.available_seats, 0) AS total_available_seats
+    FROM trains t
+    JOIN route r1 ON t.train_id = r1.train_id
+    JOIN stations s1 ON r1.station_id = s1.station_id
+    JOIN route r2 ON t.train_id = r2.train_id
+    JOIN stations s2 ON r2.station_id = s2.station_id
+    LEFT JOIN temp_seat_availability tsa ON t.train_id = tsa.train_id
+    WHERE s1.city = source_city
+      AND s2.city = destination_city
+      AND r1.stop_number < r2.stop_number
+    ORDER BY t.train_id;
+
+    -- Step 4: Drop the temporary table
+    DROP TEMPORARY TABLE IF EXISTS temp_seat_availability;
+END //
+
+DELIMITER ;
+
+--------------------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+CREATE PROCEDURE get_train_details_by_id (
+    IN input_train_id INT
+)
+BEGIN
+    -- Step 1: Show Train ID and Train Name once
+    SELECT 
+        train_id,
+        train_name
+    FROM trains
+    WHERE train_id = input_train_id;
+
+    -- Step 2: Show route (station-wise stop details)
+    SELECT 
+        s.station_name,
+        r.arrival_time,
+        r.departure_time,
+        r.stop_number
+    FROM route r
+    JOIN stations s ON r.station_id = s.station_id
+    WHERE r.train_id = input_train_id
+    ORDER BY r.stop_number;
+
+    -- Step 3: Show seat availability grouped by class
+    SELECT 
+        class_type,
+        COUNT(*) AS available_seats
+    FROM seats
+    WHERE train_id = input_train_id
+      AND availability_status = 'Available'
+    GROUP BY class_type;
+END //
+
+DELIMITER ;
+
+-----------------------------------------------------------------------------------------------------------------
+
