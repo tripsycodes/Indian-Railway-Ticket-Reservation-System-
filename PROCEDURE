@@ -74,13 +74,18 @@ BEGIN
     WHERE r.train_id = input_train_id
     ORDER BY r.stop_number;
 
-    -- Step 3: Show seat availability grouped by class
+    -- Step 3: Show seat availability grouped by class with 'RAC' counted as 0.5
     SELECT 
         class_type,
-        COUNT(*) AS available_seats
+        SUM(
+            CASE 
+                WHEN availability_status = 'Available' THEN 1
+                WHEN availability_status = 'RAC' THEN 0.5
+                ELSE 0
+            END
+        ) AS available_seats
     FROM seats
     WHERE train_id = input_train_id
-      AND availability_status = 'Available'
     GROUP BY class_type;
 END //
 
