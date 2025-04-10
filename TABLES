@@ -1,0 +1,88 @@
+CREATE TABLE passengers (
+    passenger_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    age INT CHECK (age > 0),
+    gender ENUM('Male', 'Female', 'Other'),
+    phone VARCHAR(15) UNIQUE,
+    email VARCHAR(100) UNIQUE,
+    concession_category ENUM('None','Senior', 'Student', 'Women', 'Disabled', 'Child')
+);
+
+CREATE TABLE trains (
+    train_id INT AUTO_INCREMENT PRIMARY KEY,
+    train_name VARCHAR(100) NOT NULL
+);
+
+
+CREATE TABLE tickets (
+    ticket_id INT AUTO_INCREMENT PRIMARY KEY,
+    passenger_id INT,
+    train_id INT,
+    seat_number VARCHAR(10) NOT NULL,
+    class_type ENUM('1AC', '2AC','3AC','Sleeper', 'General'),
+    pnr_status ENUM('Confirmed', 'Waitlisted', 'Cancelled', 'RAC'), -- for type of booking status
+    booking_date DATETIME DEFAULT current_timestamp,
+    travel_date DATE NOT NULL,
+    source_station VARCHAR(100) NOT NULL, -- source station
+    destination_station VARCHAR(100) NOT NULL, -- destination station
+    fare DECIMAL(10,2) CHECK (fare > 0),
+    FOREIGN KEY (passenger_id) REFERENCES passengers(passenger_id) ON DELETE CASCADE,
+    FOREIGN KEY (train_id) REFERENCES trains(train_id) ON DELETE CASCADE
+);
+
+CREATE TABLE seats (
+    seat_id VARCHAR(10) PRIMARY KEY,
+    train_id INT,
+    seat_number VARCHAR(10) NOT NULL,
+    class_type ENUM('1AC','2AC', '3AC', 'General'),
+    availability_status ENUM('Available', 'Booked'),
+    FOREIGN KEY (train_id) REFERENCES trains(train_id) ON DELETE CASCADE
+);
+
+CREATE TABLE payments (
+    payment_id INT AUTO_INCREMENT PRIMARY KEY,
+    ticket_id INT,
+    amount DECIMAL(10,2) CHECK (amount > 0),
+    payment_method ENUM('Credit Card', 'Debit Card', 'UPI', 'Cash'),
+    payment_status ENUM('Successful', 'Pending', 'Failed', 'Refunded'), -- payment_status of person
+    payment_date DATETIME DEFAULT NOW(),
+    FOREIGN KEY (ticket_id) REFERENCES tickets(ticket_id) ON DELETE CASCADE
+);
+
+CREATE TABLE cancellations (
+    cancellation_id INT AUTO_INCREMENT PRIMARY KEY,
+    ticket_id INT,
+    cancellation_date DATETIME DEFAULT current_timestamp(),
+    refund_amount DECIMAL(10,2) CHECK (refund_amount >= 0),
+    refund_status ENUM('Processed', 'Pending', 'Not Eligible'), -- refund_status
+    FOREIGN KEY (ticket_id) REFERENCES tickets(ticket_id) ON DELETE CASCADE
+);
+
+CREATE TABLE waitlist (
+    waitlist_id INT AUTO_INCREMENT PRIMARY KEY,
+    passenger_id INT,
+    train_id INT,
+    journey_date DATE NOT NULL, --  journey_date
+    waitlist_rank INT CHECK (waitlist_rank > 0), --  position to waitlist_rank
+    status ENUM('Waiting', 'Confirmed', 'Cancelled'),
+    FOREIGN KEY (passenger_id) REFERENCES passengers(passenger_id) ON DELETE CASCADE,
+    FOREIGN KEY (train_id) REFERENCES trains(train_id) ON DELETE CASCADE
+);
+
+CREATE TABLE stations (
+    station_id INT AUTO_INCREMENT PRIMARY KEY,
+    station_name VARCHAR(100) NOT NULL UNIQUE,
+    city VARCHAR(50) NOT NULL, --  city location
+    state VARCHAR(50) NOT NULL -- state of station
+);
+
+CREATE TABLE route (
+    route_id INT AUTO_INCREMENT PRIMARY KEY,
+    train_id INT,
+    station_id INT,
+    stop_number INT, -- Order of stops in the route
+    arrival_time DATETIME, -- Time train arrives at this station
+    departure_time DATETIME, -- Time train departs from this station
+    FOREIGN KEY (train_id) REFERENCES trains(train_id) ON DELETE CASCADE,
+    FOREIGN KEY (station_id) REFERENCES stations(station_id) ON DELETE CASCADE
+);
