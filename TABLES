@@ -19,7 +19,7 @@ CREATE TABLE tickets (
     passenger_id INT,
     train_id INT,
     seat_number VARCHAR(10) NOT NULL,
-    class_type ENUM('1AC', '2AC','3AC','Sleeper', 'General'),
+    class_type ENUM('1AC', '2AC','3AC', 'General'),
     pnr_status ENUM('Confirmed', 'Waitlisted', 'Cancelled', 'RAC'), -- for type of booking status
     booking_date DATETIME DEFAULT current_timestamp,
     travel_date DATE NOT NULL,
@@ -35,7 +35,7 @@ CREATE TABLE seats (
     train_id INT,
     seat_number VARCHAR(10) NOT NULL,
     class_type ENUM('1AC','2AC', '3AC', 'General'),
-    availability_status ENUM('Available', 'Booked'),
+    availability_status ENUM('Available','RAC', 'Booked'),
     FOREIGN KEY (train_id) REFERENCES trains(train_id) ON DELETE CASCADE
 );
 
