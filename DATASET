@@ -312,7 +312,7 @@ INSERT INTO passengers (name, age, gender, phone, email, concession_category) VA
 ('Mahima Sharma', 71, 'Female', '9000100590', 'mahima.s@example.com', 'Senior'),
 ('Adnan Farooqi', 15, 'Male', '9000100600', 'adnan.f@example.com', 'Child'),
 ('Tripti Jain', 15, 'Female', '9002939000', 'tjain.f@example.com', 'Child'),
-('Chahat', 65, 'Female', '9000829901', 'shivahat@example.com', 'Senior');
+('Chahat Mahajan', 20, 'Female', '9000829901', 'shivahat@example.com', 'Student');
 -----------------------------------------------------------------------------------------------------------------------------
 SEATS
 
