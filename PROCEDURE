@@ -93,3 +93,92 @@ DELIMITER ;
 
 -----------------------------------------------------------------------------------------------------------------
 
+DELIMITER //
+
+CREATE PROCEDURE calculate_fare_with_concession (
+    IN p_passenger_id INT,
+    IN p_train_id INT,
+    IN p_class_type VARCHAR(20),
+    IN p_seat_status VARCHAR(10),
+    IN p_source_station_id INT,
+    IN p_destination_station_id INT
+)
+BEGIN
+    DECLARE base_rate DECIMAL(10,2);
+    DECLARE duration_in_hours DECIMAL(10,2);
+    DECLARE raw_fare DECIMAL(10,2);
+    DECLARE passenger_concession VARCHAR(20);
+    DECLARE concession_percent DECIMAL(5,2) DEFAULT 0;
+    DECLARE final_fare DECIMAL(10,2);
+
+    -- 1. Set base rate by class
+    IF p_class_type = '1AC' THEN
+        SET base_rate = 10.00;
+    ELSEIF p_class_type = '2AC' THEN
+        SET base_rate = 8.00;
+    ELSEIF p_class_type = '3AC' THEN
+        SET base_rate = 6.00;
+    ELSEIF p_class_type = 'General' THEN
+        SET base_rate = 4.00;
+    ELSE
+        SET base_rate = 5.00; -- default if unknown class
+    END IF;
+
+    -- 2. Adjust base rate if RAC
+    IF p_seat_status = 'RAC' THEN
+        SET base_rate = base_rate * 0.5;
+    END IF;
+
+    -- 3. Calculate travel duration
+    SELECT 
+        TIMESTAMPDIFF(MINUTE, r1.departure_time, r2.arrival_time) 
+    INTO duration_in_hours
+    FROM route r1
+    JOIN route r2 ON r1.train_id = r2.train_id
+    WHERE r1.station_id = p_source_station_id
+      AND r2.station_id = p_destination_station_id
+      AND r1.train_id = p_train_id
+      AND r1.stop_number < r2.stop_number;
+
+    -- 4. Raw fare before concession
+    SET raw_fare = base_rate * duration_in_hours;
+
+    -- 5. Fetch passenger's concession category
+    SELECT concession_category
+    INTO passenger_concession
+    FROM passengers
+    WHERE passenger_id = p_passenger_id;
+
+    -- 6. Apply concession percentage
+    SET passenger_concession = LOWER(passenger_concession);  -- Normalize casing
+
+    IF passenger_concession = 'senior' THEN
+        SET concession_percent = 0.4;
+    ELSEIF passenger_concession = 'student' THEN
+        SET concession_percent = 0.5;
+    ELSEIF passenger_concession = 'women' THEN
+        SET concession_percent = 0.3;
+    ELSEIF passenger_concession = 'disabled' THEN
+        SET concession_percent = 0.6;
+    ELSEIF passenger_concession = 'child' THEN
+        SET concession_percent = 0.7;
+    ELSE
+        SET concession_percent = 0.0;
+    END IF;
+
+    -- 7. Final fare calculation
+    SET final_fare = raw_fare * (1 - concession_percent);
+
+    -- 8. Output result
+    SELECT 
+        p_passenger_id AS passenger_id,
+        p_train_id AS train_id,
+        p_class_type AS seat_type,
+        p_seat_status AS seat_status,
+        passenger_concession AS concession_applied,
+        ROUND(final_fare, 2) AS calculated_fare;
+END //
+
+DELIMITER ;
+
+-------------------------------------------------------------------------------------------------------
