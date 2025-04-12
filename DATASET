@@ -830,4 +830,11 @@ UPDATE seats
 SET availability_status = 'Available'
 WHERE train_id BETWEEN 1 AND 25;
 
+alter table route modify route_id int;
+
+alter table route
+drop primary key;
+
+update route
+set route_id=train_id;
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
