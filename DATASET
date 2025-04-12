@@ -1016,3 +1016,10 @@ CALL AddPayment(72, 'Cash', 'Successful');
 CALL AddPayment(73, 'Credit Card', 'Successful');
 CALL AddPayment(74, 'Debit Card', 'Successful');
 -------------------------------------------------------------------------------------------------------------------------------------
+ call CancelTicket(1);
+ call CancelTicket(4);
+ call CancelTicket(48);
+ call CancelTicket(52);
+ call CancelTicket(59);
+ call CancelTicket(74);
+----------------------------------------------------------------------------------------------------------------------------------------
