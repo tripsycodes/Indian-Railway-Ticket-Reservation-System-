@@ -91,11 +91,3 @@ modify class_type enum('1AC', '2AC', '3AC', 'General');
 
 alter table seats
 modify availability_status enum('Available', 'RAC', 'Booked');
-
-alter table route modify route_id int;
-
-alter table route
-drop primary key;
-
-update route
-set route_id=train_id;
