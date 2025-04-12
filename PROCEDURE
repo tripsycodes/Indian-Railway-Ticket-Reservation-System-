@@ -397,3 +397,137 @@ END //
 
 DELIMITER ;
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+DELIMITER $$
+
+CREATE PROCEDURE CancelTicket(IN t_ticket_id INT)
+BEGIN
+    proc: BEGIN
+        DECLARE v_train_id INT;
+        DECLARE v_class_type ENUM('1AC', '2AC', '3AC', 'Sleeper', 'General');
+        DECLARE v_pnr_status ENUM('Confirmed', 'Waitlisted', 'Cancelled', 'RAC');
+        DECLARE v_seat_number VARCHAR(10);
+        DECLARE v_fare DECIMAL(10,2);
+        DECLARE v_payment_method ENUM('Credit Card','Debit Card','UPI','Cash');
+        DECLARE v_seat_id VARCHAR(50);
+        DECLARE v_count INT;
+
+        -- Check if ticket exists
+        SELECT COUNT(*) INTO v_count FROM tickets WHERE ticket_id = t_ticket_id;
+        IF v_count = 0 THEN
+            INSERT INTO cancellations (ticket_id, refund_amount, refund_status)
+            VALUES (t_ticket_id, 0, 'Not Eligible');
+            LEAVE proc;
+        END IF;
+
+        -- Get details from the ticket
+        SELECT train_id, class_type, pnr_status, seat_number, fare
+        INTO v_train_id, v_class_type, v_pnr_status, v_seat_number, v_fare
+        FROM tickets WHERE ticket_id = t_ticket_id;
+
+        -- If already cancelled
+        IF v_pnr_status = 'Cancelled' THEN
+            INSERT INTO cancellations (ticket_id, refund_amount, refund_status)
+            VALUES (t_ticket_id, 0, 'Not Eligible');
+            LEAVE proc;
+        END IF;
+
+        -- Get payment method
+        SELECT payment_method INTO v_payment_method FROM payments WHERE ticket_id = t_ticket_id LIMIT 1;
+
+        -- Construct seat_id
+        SET v_seat_id = CONCAT('T', v_train_id, '_S', v_seat_number);
+
+        -- Confirmed Ticket Logic
+        IF v_pnr_status = 'Confirmed' THEN
+            UPDATE tickets SET pnr_status = 'Cancelled' WHERE ticket_id = t_ticket_id;
+            UPDATE seats SET availability_status = 'Available'
+            WHERE train_id = v_train_id AND seat_number = v_seat_number AND class_type = v_class_type;
+
+            -- Check waitlist for this class type and train
+            SET @wid = NULL;
+            SELECT waitlist_id INTO @wid
+            FROM waitlist
+            WHERE train_id = v_train_id AND seat_type = v_class_type AND status = 'Waiting'
+            ORDER BY waitlist_id LIMIT 1;
+
+            IF @wid IS NOT NULL THEN
+                SET @pid = (SELECT passenger_id FROM waitlist WHERE waitlist_id = @wid);
+                SET @tid = (SELECT ticket_id FROM tickets WHERE passenger_id = @pid AND train_id = v_train_id AND class_type = v_class_type AND pnr_status = 'Waitlisted' LIMIT 1);
+
+                UPDATE tickets SET pnr_status = 'Confirmed', seat_number = v_seat_number WHERE ticket_id = @tid;
+                UPDATE seats SET availability_status = 'Booked'
+                WHERE seat_id = v_seat_id;
+
+                UPDATE waitlist SET status = 'Confirmed' WHERE waitlist_id = @wid;
+            END IF;
+
+            INSERT INTO payments (ticket_id, amount, payment_method, payment_status)
+            VALUES (t_ticket_id, v_fare * 0.5, v_payment_method, 'Refunded');
+
+        -- RAC Ticket Logic
+        ELSEIF v_pnr_status = 'RAC' THEN
+            UPDATE tickets SET pnr_status = 'Cancelled' WHERE ticket_id = t_ticket_id;
+
+            -- Count remaining RAC tickets for the same seat (excluding this ticket)
+            SET @rac_count = (
+                SELECT COUNT(*)
+                FROM tickets
+                WHERE train_id = v_train_id
+                  AND class_type = v_class_type
+                  AND pnr_status = 'RAC'
+                  AND ticket_id != t_ticket_id
+                  AND seat_number = v_seat_number
+            );
+
+            -- Total RAC tickets on seat including this one before deletion
+            SET @total_rac = @rac_count + 1;
+
+            IF @rac_count > 0 THEN
+                UPDATE seats SET availability_status = 'RAC'
+                WHERE seat_id = v_seat_id;
+            ELSE
+                UPDATE seats SET availability_status = 'Available'
+                WHERE seat_id = v_seat_id;
+
+                -- Check waitlist only if total_rac < 2
+                IF @total_rac < 2 THEN
+                    SET @wid = NULL;
+                    SELECT waitlist_id INTO @wid
+                    FROM waitlist
+                    WHERE train_id = v_train_id AND seat_type = v_class_type AND status = 'Waiting'
+                    ORDER BY waitlist_id LIMIT 1;
+
+                    IF @wid IS NOT NULL THEN
+                        SET @pid = (SELECT passenger_id FROM waitlist WHERE waitlist_id = @wid);
+                        SET @tid = (SELECT ticket_id FROM tickets WHERE passenger_id = @pid AND train_id = v_train_id AND class_type = v_class_type AND pnr_status = 'Waitlisted' LIMIT 1);
+
+                        UPDATE tickets SET pnr_status = 'Confirmed', seat_number = v_seat_number WHERE ticket_id = @tid;
+                        UPDATE seats SET availability_status = 'Booked'
+                        WHERE seat_id = v_seat_id;
+
+                        UPDATE waitlist SET status = 'Confirmed' WHERE waitlist_id = @wid;
+                    END IF;
+                END IF;
+            END IF;
+
+            INSERT INTO payments (ticket_id, amount, payment_method, payment_status)
+            VALUES (t_ticket_id, v_fare * 0.5, v_payment_method, 'Refunded');
+
+        -- Waitlisted Ticket Logic
+        ELSEIF v_pnr_status = 'Waitlisted' THEN
+            UPDATE tickets SET pnr_status = 'Cancelled' WHERE ticket_id = t_ticket_id;
+
+            INSERT INTO payments (ticket_id, amount, payment_method, payment_status)
+            VALUES (t_ticket_id, v_fare, v_payment_method, 'Refunded');
+
+            UPDATE waitlist SET status = 'Cancelled'
+            WHERE passenger_id = (SELECT passenger_id FROM tickets WHERE ticket_id = t_ticket_id)
+            AND train_id = v_train_id;
+        END IF;
+    END proc;
+END$$
+
+DELIMITER ;
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
