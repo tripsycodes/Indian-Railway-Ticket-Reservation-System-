@@ -372,3 +372,28 @@ END //
 DELIMITER ;
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------
+DELIMITER //
+
+CREATE PROCEDURE AddPayment (
+    IN in_ticket_id INT,
+    IN in_payment_method ENUM('Credit Card','Debit Card','UPI','Cash'),
+    IN in_payment_status ENUM('Successful','Pending','Failed','Refunded')
+)
+BEGIN
+    DECLARE ticket_fare DECIMAL(10,2);
+
+    -- Fetch the fare from tickets table
+    SELECT fare INTO ticket_fare
+    FROM tickets
+    WHERE ticket_id = in_ticket_id;
+
+    -- Insert the payment record
+    INSERT INTO payments (
+        ticket_id, amount, payment_method, payment_status, payment_date
+    ) VALUES (
+        in_ticket_id, ticket_fare, in_payment_method, in_payment_status, NOW()
+    );
+END //
+
+DELIMITER ;
+----------------------------------------------------------------------------------------------------------------------------------------------------------
