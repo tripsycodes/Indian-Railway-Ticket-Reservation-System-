@@ -91,3 +91,11 @@ modify class_type enum('1AC', '2AC', '3AC', 'General');
 
 alter table seats
 modify availability_status enum('Available', 'RAC', 'Booked');
+
+
+ALTER TABLE waitlist
+drop column waitlist_rank;
+
+ALTER TABLE waitlist
+ADD seat_type enum('1AC', '2AC', '3AC', 'General');
+
