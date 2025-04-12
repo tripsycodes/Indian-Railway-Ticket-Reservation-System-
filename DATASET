@@ -884,3 +884,64 @@ drop primary key;
 update route
 set route_id=train_id;
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Populating Tickets
+
+call book_ticket(1,1,1,2,1,'1AC','Normal','2025-04-11');
+call book_ticket(1,1,1,2,2,'1AC','RAC','2025-04-11');
+call book_ticket(1,1,1,3,1,'1AC','RAC','2025-04-11');
+call book_ticket(1,1,1,2,2,'1AC','RAC','2025-04-11');
+call book_ticket(1,1,1,2,2,'1AC','Normal','2025-04-11');
+call book_ticket(10,10,31,33,63,'1AC','Normal', '2025-04-11');
+CALL book_ticket(2, 2, 4, 6, 6, '3AC', 'Normal', '2025-06-11');
+CALL book_ticket(3, 3, 1, 6, 7, 'General', 'RAC', '2025-06-11');
+CALL book_ticket(3, 3, 1, 6, 8, '2AC', 'Normal', '2025-06-11');
+CALL book_ticket(3, 3, 1, 6, 9, '1AC', 'Normal', '2025-06-11');
+CALL book_ticket(4, 4, 7, 10, 10, '3AC', 'Normal', '2025-06-11');
+CALL book_ticket(4, 4, 7, 10, 11, 'General', 'Normal', '2025-06-11');
+CALL book_ticket(4, 4, 7, 10, 12, '2AC', 'Normal', '2025-06-11');
+CALL book_ticket(5, 5, 11, 14, 13, '2AC', 'RAC', '2025-06-11');
+CALL book_ticket(5, 5, 11, 14, 14, '1AC', 'Normal', '2025-06-11');
+CALL book_ticket(5, 5, 11, 14, 15, 'General', 'Normal', '2025-06-11');
+CALL book_ticket(6, 6, 15, 18, 16, '3AC', 'Normal', '2025-06-11');
+CALL book_ticket(6, 6, 15, 18, 17, '2AC', 'Normal', '2025-06-11');
+CALL book_ticket(6, 6, 15, 18, 18, '1AC', 'Normal', '2025-06-11');
+CALL book_ticket(7, 7, 19, 22, 19, 'General', 'RAC', '2025-06-11');
+CALL book_ticket(7, 7, 19, 22, 20, '2AC', 'Normal', '2025-06-11');
+CALL book_ticket(7, 7, 19, 22, 21, '3AC', 'Normal', '2025-06-11');
+CALL book_ticket(8, 8, 23, 26, 22, '1AC', 'Normal', '2025-06-11');
+CALL book_ticket(8, 8, 23, 26, 23, 'General', 'Normal', '2025-06-11');
+CALL book_ticket(8, 8, 23, 26, 24, '3AC', 'Normal', '2025-06-11');
+CALL book_ticket(9, 9, 27, 30, 25, '2AC', 'RAC', '2025-06-11');
+CALL book_ticket(9, 9, 27, 30, 26, '2AC', 'Normal', '2025-06-11');
+CALL book_ticket(9, 9, 27, 30, 27, 'General', 'Normal', '2025-06-11');
+CALL book_ticket(10, 10, 31, 34, 28, '1AC', 'Normal', '2025-06-11');
+CALL book_ticket(10, 10, 31, 34, 29, '3AC', 'Normal', '2025-06-11');
+CALL book_ticket(10, 10, 31, 34, 30, 'General', 'Normal', '2025-06-11');
+CALL book_ticket(11, 11, 35, 38, 31, '2AC', 'Normal', '2025-06-11');
+CALL book_ticket(11, 11, 35, 38, 32, '2AC', 'RAC', '2025-06-11');
+CALL book_ticket(11, 11, 35, 38, 33, '1AC', 'Normal', '2025-06-11');
+CALL book_ticket(12, 12, 39, 42, 34, '3AC', 'Normal', '2025-06-11');
+CALL book_ticket(12, 12, 39, 42, 35, '2AC', 'Normal', '2025-06-11');
+CALL book_ticket(12, 12, 39, 42, 36, 'General', 'Normal', '2025-06-11');
+CALL book_ticket(13, 13, 43, 46, 37, '1AC', 'Normal', '2025-06-11');
+CALL book_ticket(13, 13, 43, 46, 38, '2AC', 'Normal', '2025-06-11');
+CALL book_ticket(13, 13, 43, 46, 39, 'General', 'Normal', '2025-06-11');
+CALL book_ticket(14, 14, 47, 50, 40, '3AC', 'Normal', '2025-06-11');
+CALL book_ticket(14, 14, 47, 50, 41, '2AC', 'Normal', '2025-06-11');
+CALL book_ticket(14, 14, 47, 50, 42, '1AC', 'Normal', '2025-06-11');
+CALL book_ticket(5, 5, 11, 14, 44, '2AC', 'Normal', '2025-06-11');
+CALL book_ticket(5, 5, 11, 14, 45, '2AC', 'Normal', '2025-06-11');
+CALL book_ticket(5, 5, 11, 14, 46, '2AC', 'Normal', '2025-06-11');
+CALL book_ticket(12, 12, 39, 42, 41, '3AC', 'Normal', '2025-06-11');
+CALL book_ticket(12, 12, 39, 42, 42, '3AC', 'Normal', '2025-06-11');
+CALL book_ticket(12, 12, 39, 42, 43, '3AC', 'RAC', '2025-06-11');
+CALL book_ticket(12, 12, 39, 42, 47, '3AC', 'Normal', '2025-06-11');
+CALL book_ticket(8, 8, 23, 26, 48, '1AC', 'RAC', '2025-06-11');
+CALL book_ticket(8, 8, 23, 26, 49, '1AC', 'RAC', '2025-06-11');
+CALL book_ticket(8, 8, 23, 26, 50, '1AC', 'RAC', '2025-06-11');
+CALL book_ticket(4, 4, 7, 10, 54, '2AC', 'Normal', '2025-06-11');
+CALL book_ticket(4, 4, 7, 10, 55, '2AC', 'RAC', '2025-06-11');
+CALL book_ticket(4, 4, 7, 10, 56, '2AC', 'Normal', '2025-06-11');
+
+--------------------------------------------------------------------------------------------------------------
