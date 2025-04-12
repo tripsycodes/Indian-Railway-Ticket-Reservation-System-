@@ -531,3 +531,49 @@ END$$
 DELIMITER ;
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+CREATE PROCEDURE get_total_revenue(IN start_date DATE, IN end_date DATE) BEGIN DECLARE total_bookings DECIMAL(10,2); DECLARE total_refunds DECIMAL(10,2);
+
+-- Calculate total amount collected from payments
+SELECT IFNULL(SUM(amount), 0) INTO total_bookings
+FROM payments
+WHERE DATE(payment_date) BETWEEN start_date AND end_date;
+
+-- Calculate total refund amount processed
+SELECT IFNULL(SUM(refund_amount), 0) INTO total_refunds
+FROM cancellations
+WHERE refund_status = 'Processed'
+  AND DATE(cancellation_date) BETWEEN start_date AND end_date;
+
+-- Show results
+SELECT
+    total_bookings AS total_collected,
+    total_refunds AS total_refunded,
+    total_bookings - total_refunds AS net_revenue;
+
+
+END //
+
+DELIMITER ;
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+CREATE PROCEDURE get_train_with_max_passengers() 
+BEGIN WITH passenger_counts AS ( 
+	SELECT train_id, COUNT(*) AS passenger_count 
+	FROM tickets GROUP BY train_id ), max_count_cte AS ( 
+		SELECT MAX(passenger_count) AS max_passengers 
+		FROM passenger_counts ) 
+
+	SELECT pc.train_id, pc.passenger_count 
+	FROM passenger_counts pc 
+	JOIN max_count_cte mcc ON pc.passenger_count = mcc.max_passengers; 
+
+END //
+
+DELIMITER ;
+----------------------------------------------------------------------------------------------------------------------------------------
