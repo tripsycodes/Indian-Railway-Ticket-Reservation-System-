@@ -182,3 +182,164 @@ END //
 DELIMITER ;
 
 -------------------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+CREATE PROCEDURE book_ticket (
+    IN p_route_id INT,
+    IN p_train_id INT,
+    IN p_start_station_id INT,
+    IN p_end_station_id INT,
+    IN p_passenger_id INT,
+    IN p_class_type ENUM('1AC','2AC','3AC','General'),
+    IN p_seat_status ENUM('Normal','RAC'),
+    IN p_travel_date DATE
+)
+BEGIN
+    DECLARE v_seat_number VARCHAR(10);
+    DECLARE v_source_station VARCHAR(100);
+    DECLARE v_destination_station VARCHAR(100);
+    DECLARE v_status ENUM('Confirmed', 'RAC', 'Waitlisted');
+    DECLARE base_rate DECIMAL(10,2);
+    DECLARE duration_in_hours DECIMAL(10,2);
+    DECLARE raw_fare DECIMAL(10,2);
+    DECLARE passenger_concession VARCHAR(20);
+    DECLARE concession_percent DECIMAL(5,2) DEFAULT 0;
+    DECLARE v_fare DECIMAL(10,2);
+
+    -- Get source and destination station names
+    SELECT s1.station_name, s2.station_name
+    INTO v_source_station, v_destination_station
+    FROM stations s1, stations s2
+    WHERE s1.station_id = p_start_station_id AND s2.station_id = p_end_station_id;
+
+    -- Determine seat based on type
+    IF p_seat_status = 'Normal' THEN
+        -- Find first available seat
+        SELECT seat_number INTO v_seat_number
+        FROM seats
+        WHERE train_id = p_train_id AND class_type = p_class_type AND availability_status = 'Available'
+        LIMIT 1;
+
+        IF v_seat_number IS NOT NULL THEN
+            UPDATE seats SET availability_status = 'Booked'
+            WHERE train_id = p_train_id AND seat_number = v_seat_number;
+
+            SET v_status = 'Confirmed';
+        ELSE
+            -- Add to waitlist
+            INSERT INTO waitlist (passenger_id, train_id, journey_date, status, seat_type)
+            VALUES (p_passenger_id, p_train_id, p_travel_date, 'Waiting', p_class_type);
+            SET v_status = 'Waitlisted';
+            SET v_seat_number = 'WAITLIST';
+        END IF;
+
+    ELSEIF p_seat_status = 'RAC' THEN
+        -- Try RAC seat first
+        SELECT seat_number INTO v_seat_number
+        FROM seats
+        WHERE train_id = p_train_id AND class_type = p_class_type AND availability_status = 'RAC'
+        LIMIT 1;
+
+        IF v_seat_number IS NOT NULL THEN
+            UPDATE seats SET availability_status = 'Booked'
+            WHERE train_id = p_train_id AND seat_number = v_seat_number;
+
+            SET v_status = 'RAC';
+
+        ELSE
+            -- Try available seat and mark it as RAC
+            SELECT seat_number INTO v_seat_number
+            FROM seats
+            WHERE train_id = p_train_id AND class_type = p_class_type AND availability_status = 'Available'
+            LIMIT 1;
+
+            IF v_seat_number IS NOT NULL THEN
+                UPDATE seats SET availability_status = 'RAC'
+                WHERE train_id = p_train_id AND seat_number = v_seat_number;
+
+                SET v_status = 'RAC';
+            ELSE
+                -- Add to waitlist
+                INSERT INTO waitlist (passenger_id, train_id, journey_date, status, seat_type)
+                VALUES (p_passenger_id, p_train_id, p_travel_date, 'Waiting', p_class_type);
+                SET v_status = 'Waitlisted';
+                SET v_seat_number = 'WAITLIST';
+            END IF;
+        END IF;
+    END IF;
+
+    -- FARE CALCULATION LOGIC ------------------
+
+    -- 1. Set base rate by class
+    IF p_class_type = '1AC' THEN
+        SET base_rate = 10.00;
+    ELSEIF p_class_type = '2AC' THEN
+        SET base_rate = 8.00;
+    ELSEIF p_class_type = '3AC' THEN
+        SET base_rate = 6.00;
+    ELSEIF p_class_type = 'General' THEN
+        SET base_rate = 4.00;
+    ELSE
+        SET base_rate = 5.00;
+    END IF;
+
+    -- 2. Adjust base rate if RAC
+    IF p_seat_status = 'RAC' THEN
+        SET base_rate = base_rate * 0.5;
+    END IF;
+
+    -- 3. Calculate travel duration (in hours)
+    SELECT 
+        TIMESTAMPDIFF(MINUTE, r1.departure_time, r2.arrival_time) 
+    INTO duration_in_hours
+    FROM route r1
+    JOIN route r2 ON r1.train_id = r2.train_id
+    WHERE r1.station_id = p_start_station_id
+      AND r2.station_id = p_end_station_id
+      AND r1.train_id = p_train_id
+      AND r1.stop_number < r2.stop_number;
+
+    -- 4. Calculate raw fare
+    SET raw_fare = base_rate * duration_in_hours;
+
+    -- 5. Get concession
+    SELECT LOWER(concession_category)
+    INTO passenger_concession
+    FROM passengers
+    WHERE passenger_id = p_passenger_id;
+
+    -- 6. Apply concession percent
+    IF passenger_concession = 'senior' THEN
+        SET concession_percent = 0.4;
+    ELSEIF passenger_concession = 'student' THEN
+        SET concession_percent = 0.5;
+    ELSEIF passenger_concession = 'women' THEN
+        SET concession_percent = 0.3;
+    ELSEIF passenger_concession = 'disabled' THEN
+        SET concession_percent = 0.6;
+    ELSEIF passenger_concession = 'child' THEN
+        SET concession_percent = 0.7;
+    ELSE
+        SET concession_percent = 0.0;
+    END IF;
+
+    -- 7. Final fare
+    SET v_fare = ROUND(raw_fare * (1 - concession_percent), 2);
+
+    -- -------------------------------------------
+
+    -- Insert into tickets
+    INSERT INTO tickets (
+        passenger_id, train_id, seat_number, class_type, pnr_status,
+        travel_date, source_station, destination_station, fare
+    )
+    VALUES (
+        p_passenger_id, p_train_id, v_seat_number, p_class_type, v_status,
+        p_travel_date, v_source_station, v_destination_station, v_fare
+    );
+END //
+
+DELIMITER ;
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
