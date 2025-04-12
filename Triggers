@@ -1,0 +1,13 @@
+DELIMITER //
+
+CREATE TRIGGER trg_after_refund_payment
+  AFTER INSERT ON payments FOR EACH ROW 
+  BEGIN IF NEW.payment_status = 'Refunded' 
+  THEN INSERT INTO cancellations ( ticket_id, cancellation_date, refund_amount, refund_status ) VALUES ( NEW.ticket_id, NOW(), NEW.amount, 'Processed' ); 
+  END IF; 
+
+END //
+
+DELIMITER ;
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
