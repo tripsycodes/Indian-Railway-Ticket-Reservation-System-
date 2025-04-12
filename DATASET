@@ -313,6 +313,52 @@ INSERT INTO passengers (name, age, gender, phone, email, concession_category) VA
 ('Adnan Farooqi', 15, 'Male', '9000100600', 'adnan.f@example.com', 'Child'),
 ('Tripti Jain', 15, 'Female', '9002939000', 'tjain.f@example.com', 'Child'),
 ('Chahat Mahajan', 20, 'Female', '9000829901', 'shivahat@example.com', 'Student');
+
+INSERT INTO passengers (name, age, gender, phone, email, concession_category) VALUES
+('Ankit Tyagi', 38, 'Male', '9000100610', 'ankit.tyagi@example.com', 'None'),
+('Shraddha Jain', 27, 'Female', '9000100620', 'shraddha.j@example.com', 'Women'),
+('Parth Malhotra', 30, 'Male', '9000100630', 'parth.m@example.com', 'None'),
+('Nisha Rathi', 59, 'Female', '9000100640', 'nisha.r@example.com', 'Senior'),
+('Vivek Dutta', 22, 'Male', '9000100650', 'vivek.d@example.com', 'Student'),
+('Radhika Nair', 33, 'Female', '9000100660', 'radhika.n@example.com', 'None'),
+('Ayaan Shaikh', 17, 'Male', '9000100670', 'ayaan.s@example.com', 'Student'),
+('Fatima Qazi', 10, 'Female', '9000100680', 'fatima.q@example.com', 'Child'),
+('Mihir Sood', 42, 'Male', '9000100690', 'mihir.s@example.com', 'None'),
+('Tanuja Bhagat', 48, 'Female', '9000100700', 'tanuja.b@example.com', 'None'),
+
+('Rajat Arora', 60, 'Male', '9000100710', 'rajat.a@example.com', 'Senior'),
+('Snehal Gaikwad', 24, 'Female', '9000100720', 'snehal.g@example.com', 'Student'),
+('Harleen Kaur', 29, 'Female', '9000100730', 'harleen.k@example.com', 'None'),
+('Akhil Narayan', 68, 'Male', '9000100740', 'akhil.n@example.com', 'Senior'),
+('Deepali Sharma', 16, 'Female', '9000100750', 'deepali.s@example.com', 'Student'),
+('Tushar Mehta', 35, 'Male', '9000100760', 'tushar.m@example.com', 'None'),
+('Payal Bansal', 44, 'Female', '9000100770', 'payal.b@example.com', 'None'),
+('Naveen Reddy', 70, 'Male', '9000100780', 'naveen.r@example.com', 'Senior'),
+('Amrita Singh', 64, 'Female', '9000100790', 'amrita.s@example.com', 'Senior'),
+('Ritesh Dubey', 26, 'Male', '9000100800', 'ritesh.d@example.com', 'None'),
+
+('Ragini Khanna', 19, 'Female', '9000100810', 'ragini.k@example.com', 'Student'),
+('Rajveer Chauhan', 7, 'Male', '9000100820', 'rajveer.c@example.com', 'Child'),
+('Naina Deshmukh', 38, 'Female', '9000100830', 'naina.d@example.com', 'Women'),
+('Saurav Paul', 28, 'Male', '9000100840', 'saurav.p@example.com', 'None'),
+('Zainab Abbas', 31, 'Female', '9000100850', 'zainab.a@example.com', 'None'),
+('Lakshya Sethi', 20, 'Male', '9000100860', 'lakshya.s@example.com', 'Student'),
+('Nandini Iyer', 36, 'Female', '9000100870', 'nandini.i@example.com', 'None'),
+('Rohan Jaiswal', 65, 'Male', '9000100880', 'rohan.j@example.com', 'Senior'),
+('Tara Bhaskar', 23, 'Female', '9000100890', 'tara.b@example.com', 'Student'),
+('Alok Yadav', 52, 'Male', '9000100900', 'alok.y@example.com', 'None'),
+
+('Sneha Kamat', 12, 'Female', '9000100910', 'sneha.k@example.com', 'Child'),
+('Anshul Kapoor', 40, 'Male', '9000100920', 'anshul.k@example.com', 'None'),
+('Rhea Sharma', 58, 'Female', '9000100930', 'rhea.s@example.com', 'Senior'),
+('Siddhi Borkar', 19, 'Female', '9000100940', 'siddhi.b@example.com', 'Student'),
+('Pranav Patankar', 34, 'Male', '9000100950', 'pranav.p@example.com', 'None'),
+('Vidya Ramesh', 66, 'Female', '9000100960', 'vidya.r@example.com', 'Senior'),
+('Harshita Jain', 13, 'Female', '9000100970', 'harshita.j@example.com', 'Child'),
+('Sameer Bansal', 11, 'Male', '9000100980', 'sameer.b@example.com', 'Child'),
+('Tanvi Joshi', 27, 'Female', '9000100990', 'tanvi.j@example.com', 'Women'),
+('Ayush Sharma', 29, 'Male', '9000101000', 'ayush.s@example.com', 'None');
+
 -----------------------------------------------------------------------------------------------------------------------------
 SEATS
 
