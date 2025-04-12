@@ -343,3 +343,32 @@ END //
 DELIMITER ;
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+CREATE PROCEDURE get_passenger_details_by_train_date (
+    IN p_train_id INT,
+    IN p_travel_date DATE
+)
+BEGIN
+    SELECT 
+        p.name AS passenger_name,
+        p.age,
+        p.gender,
+        p.phone,
+        t.seat_number,
+        CASE 
+            WHEN t.pnr_status = 'Confirmed' THEN 'Normal'
+            WHEN t.pnr_status = 'RAC' THEN 'RAC'
+            ELSE 'Other'
+        END AS seat_type
+    FROM tickets t
+    JOIN passengers p ON t.passenger_id = p.passenger_id
+    WHERE t.train_id = p_train_id
+      AND t.travel_date = p_travel_date
+      AND t.pnr_status IN ('Confirmed', 'RAC');
+END //
+
+DELIMITER ;
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------
